@@ -8,6 +8,9 @@ from pathlib import Path
 from .tools import find_tool, run
 
 
+MATROSKA_CONTAINER_TYPE = 17
+
+
 @dataclass(frozen=True)
 class SubtitleTrack:
     id: int
@@ -95,7 +98,10 @@ def probe(path: Path) -> dict:
     container = info.get("container", {})
     if not container.get("recognized") or not container.get("supported"):
         raise RuntimeError(f"Not a recognized or supported Matroska file: {path}")
-    if container.get("type") != "Matroska":
+    container_type = container.get("properties", {}).get("container_type")
+    if container_type is not None and container_type != MATROSKA_CONTAINER_TYPE:
+        raise RuntimeError(f"Expected a Matroska container, found {container.get('type', 'unknown')}: {path}")
+    if container_type is None and container.get("type") != "Matroska":
         raise RuntimeError(f"Expected a Matroska container, found {container.get('type', 'unknown')}: {path}")
     return info
 

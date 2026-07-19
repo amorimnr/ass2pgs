@@ -32,6 +32,37 @@ def test_probe_rejects_an_unrecognized_container(monkeypatch: pytest.MonkeyPatch
         mkv.probe(Path("broken.mkv"))
 
 
+def test_probe_accepts_localized_matroska_container_name(monkeypatch: pytest.MonkeyPatch) -> None:
+    class Result:
+        stdout = (
+            '{"container":{"recognized":true,"supported":true,'
+            '"type":"Ficheiro MKV","properties":{"container_type":17}}}'
+        )
+
+    monkeypatch.setattr(mkv, "find_tool", lambda name: name)
+    monkeypatch.setattr(mkv, "run", lambda *args, **kwargs: Result())
+
+    info = mkv.probe(Path("episode.mkv"))
+
+    assert info["container"]["type"] == "Ficheiro MKV"
+
+
+def test_probe_rejects_non_matroska_by_stable_container_id(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class Result:
+        stdout = (
+            '{"container":{"recognized":true,"supported":true,'
+            '"type":"Ficheiro MP4","properties":{"container_type":25}}}'
+        )
+
+    monkeypatch.setattr(mkv, "find_tool", lambda name: name)
+    monkeypatch.setattr(mkv, "run", lambda *args, **kwargs: Result())
+
+    with pytest.raises(RuntimeError, match="Expected a Matroska"):
+        mkv.probe(Path("renamed.mkv"))
+
+
 def test_mux_appends_pgs_and_atomically_replaces_destination(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
