@@ -1,0 +1,20 @@
+[Script Info]
+Title: Synthetic jellyfin-ass2pgs test fixture
+ScriptType: v4.00+
+PlayResX: 640
+PlayResY: 360
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,32,&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,1,2,20,20,24,1
+Style: Custom,Synthetic Fixture Sans,28,&H0000FFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,0,8,20,20,20,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.00,Custom,,0,0,0,,Static synthetic subtitle
+Dialogue: 0,0:00:01.00,0:00:02.00,Default,,0,0,0,,{\move(40,300,400,300)}Moving text
+Dialogue: 0,0:00:02.00,0:00:03.00,Default,,0,0,0,,{\t(0,800,\fscx130)}Transforming text
+Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,{\fad(200,200)}Fading text
+Dialogue: 0,0:00:04.00,0:00:05.00,Default,,0,0,0,,{\k20}Ka{\kf30}ra{\ko20}oke
+Dialogue: 0,0:00:05.00,0:00:06.00,Default,,0,0,0,Banner;5;0;20,Banner effect

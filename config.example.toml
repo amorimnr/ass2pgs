@@ -1,0 +1,17 @@
+# Parallel MKVs processed by convert-library/resume.
+workers = 2
+
+# Temporary rendering data is deleted unless this is true.
+keep_temp = false
+overwrite = false
+
+font_cache = ".cache/fonts"
+work_dir = ".cache/work"
+state_file = ".cache/jellyfin-ass2pgs-state.json"
+
+pgs_matrix = "bt709"
+dynamic_render_fps = 24.0
+retry_failed_groups = 0
+
+# Windows example for a non-default MSYS2 installation:
+# libass_path = "C:/msys64/ucrt64/bin/libass-9.dll"

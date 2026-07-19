@@ -1,0 +1,61 @@
+# Local-only artifacts and development output
+_local-artifacts/
+.cache/
+out/
+experiments/
+
+# Python environments, caches, and build products
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local configuration and secrets
+config.toml
+*.local.toml
+.env
+.env.*
+
+# Media, extracted subtitles, fonts, and generated subtitle streams
+*.mkv
+*.mk3d
+*.mka
+*.mp4
+*.m4v
+*.avi
+*.mov
+*.webm
+*.sup
+*.pgs
+*.srt
+*.ssa
+*.ass
+*.ttf
+*.otf
+*.ttc
+
+# Public synthetic subtitle fixtures are explicitly safe to track
+!tests/fixtures/
+!tests/fixtures/*.ass
+
+# Archives and temporary mux output
+*.rar
+*.7z
+*.zip
+*.jellyfin-ass2pgs-*.tmp.mkv
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
