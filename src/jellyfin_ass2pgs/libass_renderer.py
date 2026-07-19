@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 import re
+import sys
 from time import perf_counter
 from typing import Callable, Iterable
 
@@ -575,18 +576,13 @@ def _font_names(path: Path) -> set[str]:
 
 
 def _load_libass(libass_path: Path | str | None) -> tuple[ctypes.CDLL, object | None]:
-    candidates: list[str] = []
-    if libass_path is not None:
-        candidates.append(str(libass_path))
-    env_path = os.environ.get("LIBASS_PATH")
-    if env_path:
-        candidates.append(env_path)
-    if os.name == "nt" and DEFAULT_WINDOWS_LIBASS.exists():
-        candidates.append(str(DEFAULT_WINDOWS_LIBASS))
-    discovered = ctypes.util.find_library("ass")
-    if discovered:
-        candidates.append(discovered)
-    candidates.extend(["libass.so.9", "libass.so", "libass.dylib", "libass-9.dll"])
+    candidates = _libass_candidates(
+        libass_path,
+        env_path=os.environ.get("LIBASS_PATH"),
+        discovered=ctypes.util.find_library("ass"),
+        os_name=os.name,
+        platform_name=sys.platform,
+    )
 
     errors: list[str] = []
     seen: set[str] = set()
@@ -604,10 +600,56 @@ def _load_libass(libass_path: Path | str | None) -> tuple[ctypes.CDLL, object | 
             if dll_directory is not None:
                 dll_directory.close()
             errors.append(f"{candidate}: {exc}")
-    detail = "; ".join(errors[-3:])
+    attempted = ", ".join(seen)
+    detail = "; ".join(errors[-3:]) or "no loadable candidates"
     raise LibassRenderError(
-        "Could not load libass. Set libass_path in config.toml or LIBASS_PATH. " + detail
+        f"Could not load libass. {_libass_install_hint(os.name, sys.platform)} "
+        f"Tried: {attempted}. Last errors: {detail}"
     )
+
+
+def _libass_candidates(
+    configured_path: Path | str | None,
+    *,
+    env_path: str | None,
+    discovered: str | None,
+    os_name: str,
+    platform_name: str,
+) -> list[str]:
+    candidates: list[str] = []
+    if configured_path is not None:
+        candidates.append(str(configured_path))
+    if env_path:
+        candidates.append(env_path)
+    if os_name == "nt" and DEFAULT_WINDOWS_LIBASS.exists():
+        candidates.append(str(DEFAULT_WINDOWS_LIBASS))
+    if discovered:
+        candidates.append(discovered)
+
+    if os_name == "nt":
+        candidates.extend(["libass-9.dll", "libass.dll"])
+    elif platform_name == "darwin":
+        candidates.extend(["libass.9.dylib", "libass.dylib"])
+    else:
+        candidates.extend(["libass.so.9", "libass.so"])
+    return list(dict.fromkeys(candidates))
+
+
+def _libass_install_hint(os_name: str, platform_name: str) -> str:
+    if os_name == "nt":
+        return (
+            "Install MSYS2 UCRT64 libass with "
+            "'pacman -S mingw-w64-ucrt-x86_64-libass', or set libass_path in "
+            "config.toml / LIBASS_PATH to libass-9.dll."
+        )
+    if platform_name.startswith("linux"):
+        return (
+            "On Ubuntu/Debian install it with 'sudo apt install libass9', or set "
+            "libass_path in config.toml / LIBASS_PATH to libass.so.9."
+        )
+    if platform_name == "darwin":
+        return "Install libass (for example with Homebrew), or set LIBASS_PATH."
+    return "Install libass for this system, or set libass_path in config.toml / LIBASS_PATH."
 
 
 def _uses_limited_range(ycbcr_matrix: int) -> bool:

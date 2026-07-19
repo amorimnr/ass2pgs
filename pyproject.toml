@@ -25,6 +25,7 @@ test = [
 ]
 
 [project.scripts]
+ass2pgs = "jellyfin_ass2pgs.cli:main"
 jellyfin-ass2pgs = "jellyfin_ass2pgs.cli:main"
 
 [build-system]

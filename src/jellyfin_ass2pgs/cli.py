@@ -15,7 +15,7 @@ from .renderer import render_and_crop
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="jellyfin-ass2pgs")
+    parser = argparse.ArgumentParser(prog="ass2pgs")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     list_parser = subparsers.add_parser("tracks", help="List ASS subtitle tracks in an MKV.")

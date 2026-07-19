@@ -1,6 +1,3 @@
-projeto pessoal pra o meu server
-segue umas instruções ai
-
 # jellyfin-ass2pgs
 
 `jellyfin-ass2pgs` converts ASS subtitle tracks inside Matroska files to PGS
@@ -70,7 +67,7 @@ then the system library search path (`libass.so.9` or `libass.so`).
 ## Installation
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/amorimnr/ass2pgs.git
 cd jellyfin-ass2pgs
 python -m venv .venv
 ```
@@ -80,7 +77,8 @@ Windows PowerShell:
 ```powershell
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -e .
+python -m pip install .
+ass2pgs --help
 ```
 
 Linux:
@@ -88,8 +86,11 @@ Linux:
 ```bash
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -e .
+python -m pip install .
+ass2pgs --help
 ```
+
+Use `python -m pip install -e ".[test]"` instead when developing locally.
 
 Copy `config.example.toml` to `config.toml` only when overriding defaults.
 `config.toml` is intentionally ignored because it can contain machine-specific
@@ -100,13 +101,13 @@ paths.
 List subtitle tracks and their Matroska IDs:
 
 ```bash
-python -m jellyfin_ass2pgs tracks episode.mkv
+ass2pgs tracks episode.mkv
 ```
 
 Convert one file to a separate output:
 
 ```bash
-python -m jellyfin_ass2pgs convert episode.mkv \
+ass2pgs convert episode.mkv \
   --track-name "dialogue" --output episode.with-pgs.mkv
 ```
 
@@ -126,25 +127,29 @@ in the output.
 Convert a library in place, with atomic replacement after a successful mux:
 
 ```bash
-python -m jellyfin_ass2pgs convert-library /mnt/media/jellyfin --in-place
+ass2pgs convert-library /mnt/media/jellyfin --in-place
 ```
 
 Or keep the source library untouched:
 
 ```bash
-python -m jellyfin_ass2pgs convert-library /mnt/media/jellyfin \
+ass2pgs convert-library /mnt/media/jellyfin \
   --output-dir /mnt/media/jellyfin-pgs --track-lang eng
 ```
 
 Resume using the same output mode and selectors:
 
 ```bash
-python -m jellyfin_ass2pgs resume /mnt/media/jellyfin \
+ass2pgs resume /mnt/media/jellyfin \
   --output-dir /mnt/media/jellyfin-pgs --track-lang eng
 ```
 
 Use `--force` to replace matching generated PGS tracks. Outputs made by older
 builds without the ` (PGS)` suffix can be migrated with one forced run.
+
+`ass2pgs` is the recommended command after installation. The longer
+`jellyfin-ass2pgs` console command and `python -m jellyfin_ass2pgs` remain
+available for compatibility and expose the same subcommands and flags.
 
 ## Safety
 
